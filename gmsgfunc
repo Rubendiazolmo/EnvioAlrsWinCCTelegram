@@ -1,0 +1,10 @@
+// ***** Llamar a la función en Python para enviar el mensaje de alarma ***** \\
+
+char cmd [256] = "python c://Python//alarmas.py \"";
+
+strcat(cmd, pszMsgData);
+strcat(cmd, "\"");
+
+WinExec(cmd, 0);
+
+// ************************************************************************** \\
