@@ -1,10 +1,53 @@
-// ***** Llamar a la función en Python para enviar el mensaje de alarma ***** \\
+BOOL GMsgFunction( char* pszMsgData)
+{
 
-char cmd [256] = "python c://Python//alarmas.py \"";
+// ***** Declarar variables ***** \\
 
-strcat(cmd, pszMsgData);
-strcat(cmd, "\"");
-
-WinExec(cmd, 0);
+char *NombreArchivo;		// Nombre del archivo a generar
+MSG_RTDATA_STRUCT mRT;		// Estructura del pszMsgData
+FILE *fp;				// Tipo dato archivo
 
 // ************************************************************************** \\
+
+NombreArchivo = "C:\\Python\\Alrs\\XXXXXXX_XX_XXXXXXXXXXXXXXXXXXXXXXXXXXXXX.TXT"; // Inicializo variable con la estructura del nombre del archivo que va a tener.
+
+memset( &mRT, 0, sizeof( MSG_RTDATA_STRUCT ) ); // Necesario apra descuartizar el pszMsgData
+
+// Descurtizar pszMsgData
+if( pszMsgData != NULL ){  
+
+	sscanf( pszMsgData,  "%ld,%ld,%04d.%02d.%02d,%02d:%02d:%02d:%03d,%ld, %ld, %ld, %d,%d",
+	&mRT.dwMsgNr,                   // Número de alarma
+	&mRT.dwMsgState,                // Estado (1 = Activa, 2 = Desaparecida, 3 = Reconocida ...)
+	&mRT.stMsgTime.wYear,           // Año	      \
+	&mRT.stMsgTime.wMonth,          // Mes          |
+	&mRT.stMsgTime.wDay,            // Dia	      |
+	&mRT.stMsgTime.wHour,           // Hora         |- Fecha y hora que se ejecuta
+	&mRT.stMsgTime.wMinute,         // Minuto       |
+	&mRT.stMsgTime.wSecond,         // Segundos     |
+	&mRT.stMsgTime.wMilliseconds,   // Milisegundos /
+	&mRT.dwTimeDiff,                // Diferencia de tiempo de alarma activada
+	&mRT.dwCounter,                 // Contador (interno)
+	&mRT.dwFlags,                   // Flags( interno )
+	&mRT.wPValueUsed,
+	&mRT.wTextValueUsed );
+} 
+
+//MessageBox(NULL,"Hola","Test",MB_OKCANCEL|MB_SETFOREGROUND);
+
+// Envio mensaje si la alarma es activada o desactivada.
+if ((mRT.dwMsgState == 1) | (mRT.dwMsgState == 2))
+{
+
+// Defino nombre del archivo a crear
+sprintf(NombreArchivo, "C:\\Python\\Alrs\\%d_%d_%d.TXT", mRT.dwMsgNr, mRT.dwMsgState, mRT.dwCounter);
+
+// Creo el archivo con con el Número de alarma, el estado y el contador único (interno de wincc)
+fp = fopen(NombreArchivo, "a");
+fclose(fp);
+
+}
+
+return( TRUE );
+
+}
