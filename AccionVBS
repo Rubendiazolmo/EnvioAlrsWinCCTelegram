@@ -1,0 +1,9 @@
+Option Explicit
+Function action
+
+Dim objWshShell 
+Set objWshShell = CreateObject("Wscript.Shell")
+
+objWshShell.Run "C:\\Python\\AlarmasParaEnviar.bat",0
+
+End Function
